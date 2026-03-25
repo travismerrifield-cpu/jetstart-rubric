@@ -314,7 +314,6 @@ export const MODULES = [
       "Correctly strips wires to proper strip length (no nicks or stray strands)",
       "Terminates all sensors in correct phoenix connector positions per wiring diagram",
       "Uses correct wire gauge/type for each connection (18 AWG 2/3/4-wire; shielded comm wire)",
-      "Grounds drain wire on one end only (shielded wire)",
       "Passes tug test on all connections",
       "Manages wires neatly with cable clips; no excessive tension",
       "Wires condensate pump and overflow switch in series at CN5",

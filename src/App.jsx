@@ -104,7 +104,10 @@ export default function App() {
             {sessions.map(s => (
               <div
                 key={s.id}
-                onClick={() => setActiveSession(s)}
+                onClick={async () => {
+                  const res = await fetch(`/api/sessions/${s.id}`);
+                  setActiveSession(await res.json());
+                }}
                 className="bg-white rounded-xl border px-4 py-3 cursor-pointer transition flex items-center justify-between group hover:shadow-md"
                 style={{ borderColor: '#E2E1D3' }}
               >

@@ -356,10 +356,6 @@ export const MODULES = [
       "Wears safety glasses during all hands-on activities",
       "Wears gloves during all hands-on activities",
       "Cleans up metal shavings from sheet metal work",
-      "Confirms gas is off before removing gas line; soap-tests cap",
-      "Caps flue pipe after removing furnace",
-      "Works in ventilated area when handling refrigerant or solvents",
-      "Does not power-cycle Hub during firmware update (white LED)",
     ],
   },
   {

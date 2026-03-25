@@ -174,6 +174,7 @@ export const MODULES = [
           "Secures sections with correct screw locations and quantity",
           "Seals all seams with foil tape (minimal creases)",
           "Final transition is square, tight, and aesthetically clean",
+          "Able to create a supply transition in 30 minutes",
         ],
       },
       {

@@ -353,8 +353,7 @@ export const MODULES = [
     title: "SAFETY — All Modules",
     isSafety: true,
     skills: [
-      "Wears safety glasses during all hands-on activities",
-      "Wears gloves during all hands-on activities",
+      "Wears safety glasses and gloves during all hands-on activities",
       "Maintains a clean work area",
     ],
   },

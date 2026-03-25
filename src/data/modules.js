@@ -371,5 +371,5 @@ export const MODULES = [
 ];
 
 export const NUM_STUDENTS = 12;
-export const DEFAULT_STUDENTS = Array.from({ length: NUM_STUDENTS }, (_, i) => `Student ${i + 1}`);
+export const DEFAULT_STUDENTS = Array.from({ length: NUM_STUDENTS }, (_, i) => ({ name: `Student ${i + 1}`, branch: '' }));
 export const RATING_SCALE = ["4", "3", "2", "1", "N/O"];

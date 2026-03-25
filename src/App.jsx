@@ -10,13 +10,16 @@ function NewSessionModal({ onConfirm, onCancel }) {
     e.preventDefault();
     const n = parseInt(count);
     if (!n || n < 1 || n > 20) return;
-    setNames(Array.from({ length: n }, () => ''));
+    setNames(Array.from({ length: n }, () => ({ name: '', branch: '' })));
     setStep('names');
   }
 
   function handleNamesSubmit(e) {
     e.preventDefault();
-    const filled = names.map((n, i) => n.trim() || `Student ${i + 1}`);
+    const filled = names.map((s, i) => ({
+      name: s.name.trim() || `Student ${i + 1}`,
+      branch: s.branch.trim(),
+    }));
     onConfirm(filled);
   }
 
@@ -65,21 +68,33 @@ function NewSessionModal({ onConfirm, onCancel }) {
             </form>
           ) : (
             <form onSubmit={handleNamesSubmit}>
-              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-                {names.map((name, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-xs font-bold w-5 text-right" style={{ color: '#ACAA93' }}>{i + 1}</span>
-                    <input
-                      autoFocus={i === 0}
-                      type="text"
-                      value={name}
-                      onChange={e => { const n = [...names]; n[i] = e.target.value; setNames(n); }}
-                      placeholder={`Student ${i + 1}`}
-                      className="flex-1 border-2 rounded-lg px-3 py-1.5 text-sm focus:outline-none"
-                      style={{ borderColor: '#E2E1D3' }}
-                      onFocus={e => e.target.style.borderColor = '#3CD567'}
-                      onBlur={e => e.target.style.borderColor = '#E2E1D3'}
-                    />
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                {names.map((s, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className="text-xs font-bold w-5 text-right mt-2" style={{ color: '#ACAA93' }}>{i + 1}</span>
+                    <div className="flex-1 space-y-1">
+                      <input
+                        autoFocus={i === 0}
+                        type="text"
+                        value={s.name}
+                        onChange={e => { const n = [...names]; n[i] = { ...n[i], name: e.target.value }; setNames(n); }}
+                        placeholder={`Student ${i + 1} name`}
+                        className="w-full border-2 rounded-lg px-3 py-1.5 text-sm focus:outline-none"
+                        style={{ borderColor: '#E2E1D3' }}
+                        onFocus={e => e.target.style.borderColor = '#3CD567'}
+                        onBlur={e => e.target.style.borderColor = '#E2E1D3'}
+                      />
+                      <input
+                        type="text"
+                        value={s.branch}
+                        onChange={e => { const n = [...names]; n[i] = { ...n[i], branch: e.target.value }; setNames(n); }}
+                        placeholder="Branch location"
+                        className="w-full border-2 rounded-lg px-3 py-1.5 text-sm focus:outline-none"
+                        style={{ borderColor: '#E2E1D3' }}
+                        onFocus={e => e.target.style.borderColor = '#3CD567'}
+                        onBlur={e => e.target.style.borderColor = '#E2E1D3'}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

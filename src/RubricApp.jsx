@@ -27,8 +27,13 @@ const cardColor = (avg) =>
   avg >= 1.5 ? "bg-yellow-50 border-yellow-300" :
   "bg-red-50 border-red-300";
 
+// Normalize old string-based students to { name, branch } objects
+const normalize = (arr) => (arr || DEFAULT_STUDENTS).map(s =>
+  typeof s === 'string' ? { name: s, branch: '' } : s
+);
+
 export default function RubricApp({ session, onBack }) {
-  const [students, setStudents]     = useState(session.students || DEFAULT_STUDENTS);
+  const [students, setStudents]     = useState(normalize(session.students));
   const [grades, setGrades]         = useState(session.grades   || {});
   const [notes, setNotes]           = useState(session.notes    || {});
   const [cohortInfo, setCohortInfo] = useState({
@@ -40,6 +45,7 @@ export default function RubricApp({ session, onBack }) {
   const [activeModule, setActiveModule]   = useState(0);
   const [editingStudent, setEditingStudent] = useState(null);
   const [tempName, setTempName]           = useState("");
+  const [tempBranch, setTempBranch]       = useState("");
   const [activeTab, setActiveTab]         = useState("grading");
   const [notesPanel, setNotesPanel]       = useState(null);
   const [editingInfo, setEditingInfo]     = useState(false);
@@ -156,8 +162,9 @@ export default function RubricApp({ session, onBack }) {
     html += `<p style="font-size:8pt;margin:0 0 8px"><strong>Trainer:</strong> ${cohortInfo.trainer||"_______________"} &nbsp;&nbsp; <strong>Cohort:</strong> ${cohortInfo.cohort||"_______________"} &nbsp;&nbsp; <strong>Dates:</strong> ${cohortInfo.dates||"_______________"}</p>`;
     html += `<div class="legend"><strong>Scale:</strong> <span style="background:#dcfce7">4 – Exceeds</span><span style="background:#dbeafe">3 – Meets</span><span style="background:#fef9c3">2 – Approaching</span><span style="background:#fee2e2">1 – Below</span><span style="background:#f3f4f6">N/O</span> &nbsp; Safety: ✓ Consistent · △ Inconsistent · ✗ Not Demonstrated</div>`;
 
-    students.forEach((name, si) => {
-      html += `<div class="${si > 0 ? "page-break" : ""}"><h2 style="font-size:12pt">${name}</h2>`;
+    students.forEach((s, si) => {
+      const name = s.name;
+      html += `<div class="${si > 0 ? "page-break" : ""}"><h2 style="font-size:12pt">${name}${s.branch ? ` <span style="font-size:9pt;font-weight:normal;color:#666">${s.branch}</span>` : ''}</h2>`;
       const avg = studentAvg(si);
       html += `<p style="font-size:8pt;margin:0 0 6px"><strong>Overall Average:</strong> ${avg ?? "N/A"}</p>`;
       const on = overallNote(si);
@@ -182,12 +189,12 @@ export default function RubricApp({ session, onBack }) {
     });
 
     html += `<div class="page-break"><h2 style="font-size:12pt">Cohort Summary</h2><div style="margin-bottom:12px">`;
-    students.forEach((name, si) => {
+    students.forEach((s, si) => {
       const avg = studentAvg(si);
       const col = avg===null?"#f3f4f6":avg>=3.5?"#dcfce7":avg>=2.5?"#dbeafe":avg>=1.5?"#fef9c3":"#fee2e2";
-      html += `<div class="summary-card" style="background:${col}"><div style="font-weight:bold">${name}</div><div class="avg">${avg??"-"}</div><div style="font-size:6.5pt;color:#666">overall avg</div></div>`;
+      html += `<div class="summary-card" style="background:${col}"><div style="font-weight:bold">${s.name}</div>${s.branch?`<div style="font-size:6.5pt;color:#666">${s.branch}</div>`:''}<div class="avg">${avg??"-"}</div><div style="font-size:6.5pt;color:#666">overall avg</div></div>`;
     });
-    html += `</div><table><thead><tr><th class="skill-col" style="width:180px">Module</th>${students.map(n=>`<th style="width:55px">${n}</th>`).join("")}</tr></thead><tbody>`;
+    html += `</div><table><thead><tr><th class="skill-col" style="width:180px">Module</th>${students.map(s=>`<th style="width:55px">${s.name}${s.branch?`<br><span style="font-weight:normal;font-size:6pt">${s.branch}</span>`:''}</th>`).join("")}</tr></thead><tbody>`;
     MODULES.forEach((m, mi) => {
       html += `<tr><td style="font-weight:600;font-size:7pt">${m.title.replace(/MODULE \d+: /,"").replace(/ — All Modules/,"")}</td>`;
       students.forEach((_, si) => {
@@ -337,19 +344,32 @@ export default function RubricApp({ session, onBack }) {
                   <thead>
                     <tr style={{ backgroundColor: '#0F1F0D', color: '#FBFAF1' }}>
                       <th className="px-3 py-2 text-left font-semibold border-r w-56" style={{ borderColor: '#113823' }}>Skill</th>
-                      {students.map((name, i) => (
-                        <th key={i} className="px-1 py-2 text-center font-medium border-r min-w-[80px]" style={{ borderColor: '#113823' }}>
+                      {students.map((s, i) => (
+                        <th key={i} className="px-1 py-2 text-center font-medium border-r min-w-[90px]" style={{ borderColor: '#113823' }}>
                           {editingStudent === i ? (
-                            <input
-                              autoFocus
-                              value={tempName}
-                              onChange={e => setTempName(e.target.value)}
-                              onBlur={() => { const n = [...students]; n[i] = tempName || students[i]; setStudents(n); setEditingStudent(null); }}
-                              onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") { const n = [...students]; n[i] = tempName || students[i]; setStudents(n); setEditingStudent(null); } }}
-                              className="bg-gray-700 text-white text-xs rounded px-1 w-16 text-center outline-none"
-                            />
+                            <div className="flex flex-col gap-0.5">
+                              <input
+                                autoFocus
+                                value={tempName}
+                                onChange={e => setTempName(e.target.value)}
+                                onBlur={() => { const n = [...students]; n[i] = { ...n[i], name: tempName || n[i].name, branch: tempBranch }; setStudents(n); setEditingStudent(null); }}
+                                onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") { const n = [...students]; n[i] = { ...n[i], name: tempName || n[i].name, branch: tempBranch }; setStudents(n); setEditingStudent(null); } }}
+                                className="bg-gray-700 text-white text-xs rounded px-1 w-20 text-center outline-none"
+                              />
+                              <input
+                                value={tempBranch}
+                                onChange={e => setTempBranch(e.target.value)}
+                                onBlur={() => { const n = [...students]; n[i] = { ...n[i], name: tempName || n[i].name, branch: tempBranch }; setStudents(n); setEditingStudent(null); }}
+                                onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") { const n = [...students]; n[i] = { ...n[i], name: tempName || n[i].name, branch: tempBranch }; setStudents(n); setEditingStudent(null); } }}
+                                placeholder="branch"
+                                className="bg-gray-700 text-gray-300 text-xs rounded px-1 w-20 text-center outline-none"
+                              />
+                            </div>
                           ) : (
-                            <span className="cursor-pointer hover:underline" title="Click to rename" onClick={() => { setEditingStudent(i); setTempName(students[i]); }}>{name}</span>
+                            <div className="cursor-pointer" title="Click to edit" onClick={() => { setEditingStudent(i); setTempName(s.name); setTempBranch(s.branch || ''); }}>
+                              <div className="hover:underline">{s.name}</div>
+                              {s.branch && <div className="text-xs font-normal opacity-70">{s.branch}</div>}
+                            </div>
                           )}
                         </th>
                       ))}
@@ -378,7 +398,7 @@ export default function RubricApp({ session, onBack }) {
             <div className="w-72 bg-white border-l border-gray-200 shadow-xl flex flex-col flex-shrink-0">
               <div className="px-4 py-3 flex items-start justify-between" style={{ backgroundColor: '#0F1F0D' }}>
                 <div>
-                  <div className="text-xs font-bold" style={{ color: '#3CD567' }}>{students[notesPanel.studentIdx]}</div>
+                  <div className="text-xs font-bold" style={{ color: '#3CD567' }}>{students[notesPanel.studentIdx].name}</div>
                   <div className="text-xs mt-0.5 leading-tight" style={{ color: '#ACAA93' }}>{notesPanel.skill}</div>
                 </div>
                 <button onClick={() => setNotesPanel(null)} className="text-lg leading-none ml-2" style={{ color: '#666958' }}>×</button>
@@ -396,7 +416,7 @@ export default function RubricApp({ session, onBack }) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Overall Notes for {students[notesPanel.studentIdx]}</label>
+                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Overall Notes for {students[notesPanel.studentIdx].name}</label>
                   <textarea
                     value={overallNote(notesPanel.studentIdx)}
                     onChange={e => setOverallNote(notesPanel.studentIdx, e.target.value)}
@@ -417,11 +437,12 @@ export default function RubricApp({ session, onBack }) {
         <div className="p-6 overflow-auto">
           <div className="text-sm font-bold text-gray-800 mb-4">Cohort Summary — Overall Averages</div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8">
-            {students.map((name, si) => {
+            {students.map((s, si) => {
               const avg = studentAvg(si);
               return (
                 <div key={si} className={`rounded-lg border p-3 ${cardColor(avg)}`}>
-                  <div className="font-semibold text-sm text-gray-800">{name}</div>
+                  <div className="font-semibold text-sm text-gray-800">{s.name}</div>
+                  {s.branch && <div className="text-xs text-gray-500">{s.branch}</div>}
                   <div className={`text-2xl font-bold mt-1 ${avgColor(avg)}`}>{avg ?? "—"}</div>
                   <div className="text-xs text-gray-500">overall avg</div>
                   {overallNote(si) && <div className="text-xs text-gray-600 mt-1 italic border-t border-gray-200 pt-1 line-clamp-2">{overallNote(si)}</div>}
@@ -435,7 +456,7 @@ export default function RubricApp({ session, onBack }) {
               <thead>
                 <tr style={{ backgroundColor: '#0F1F0D', color: '#FBFAF1' }}>
                   <th className="px-3 py-2 text-left border-r w-48" style={{ borderColor: '#113823' }}>Module</th>
-                  {students.map((n, i) => <th key={i} className="px-2 py-2 text-center border-r min-w-[60px]" style={{ borderColor: '#113823' }}>{n}</th>)}
+                  {students.map((s, i) => <th key={i} className="px-2 py-2 text-center border-r min-w-[60px]" style={{ borderColor: '#113823' }}><div>{s.name}</div>{s.branch && <div className="text-xs font-normal opacity-60">{s.branch}</div>}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -456,12 +477,15 @@ export default function RubricApp({ session, onBack }) {
         <div className="p-6 overflow-auto">
           <div className="text-sm font-bold text-gray-800 mb-4">Student Notes Overview</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {students.map((name, si) => {
+            {students.map((s, si) => {
               const allNotes = Object.entries(notes[si] || {}).filter(([k, v]) => k !== "__overall__" && v);
               return (
                 <div key={si} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                   <div className="px-4 py-2 flex items-center justify-between" style={{ backgroundColor: '#0F1F0D' }}>
-                    <span className="font-semibold text-sm" style={{ color: '#3CD567' }}>{name}</span>
+                    <div>
+                      <span className="font-semibold text-sm" style={{ color: '#3CD567' }}>{s.name}</span>
+                      {s.branch && <span className="text-xs ml-2" style={{ color: '#ACAA93' }}>{s.branch}</span>}
+                    </div>
                     <span className="text-xs" style={{ color: '#ACAA93' }}>{allNotes.length} skill note{allNotes.length !== 1 ? "s" : ""}</span>
                   </div>
                   <div className="p-3 space-y-2">

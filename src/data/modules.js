@@ -282,7 +282,6 @@ export const MODULES = [
       "Maintains clean and tidy work area; returns all tools/systainer kits to correct storage",
       "Uses Notion app to look up answers before asking instructor",
       "Communicates proactively with crew and instructor",
-      "Treats training equipment and customer property with care",
       "Represents Jetson's code of conduct at all times",
     ],
   },

@@ -48,6 +48,7 @@ export const MODULES = [
       "Explains the Jetson thermostat and homeowner app",
       "Describes heating vs. cooling refrigerant cycle",
       "Distinguishes between 2-ton, 3-ton, 4-ton, and 5-ton systems",
+      "Explains the functions of the ODU, IDU, Line Sets, Sensors and Smart System",
     ],
   },
   {

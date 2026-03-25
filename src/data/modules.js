@@ -43,11 +43,8 @@ export const MODULES = [
       {
         subtitle: "Line Set Cutting",
         skills: [
-          "Measures and marks cut locations accurately (within ±⅛\")",
           "Uses pipe cutter correctly; produces clean, square cuts without deforming the pipe",
           "Reams inside and deburrs/chamfers outside of tubing",
-          "Covers cut ends with electrical tape immediately after cutting",
-          "Keeps pipe face down while deburring to prevent shavings entry",
         ],
       },
       {

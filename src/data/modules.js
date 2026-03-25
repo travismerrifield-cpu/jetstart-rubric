@@ -355,7 +355,7 @@ export const MODULES = [
     skills: [
       "Wears safety glasses during all hands-on activities",
       "Wears gloves during all hands-on activities",
-      "Cleans up metal shavings from sheet metal work",
+      "Maintains a clean work area",
     ],
   },
   {

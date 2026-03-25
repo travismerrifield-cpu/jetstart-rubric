@@ -355,11 +355,6 @@ export const MODULES = [
     skills: [
       "Wears safety glasses during all hands-on activities",
       "Wears gloves during all hands-on activities",
-      "Confirms absence of voltage before electrical work",
-      "Never carries nitrogen cylinder up a ladder",
-      "Stands to the side of gauges when pressurizing",
-      "Pressurizes slowly and gradually",
-      "Wears cut-resistant gloves during sheet metal work",
       "Cleans up metal shavings from sheet metal work",
       "Confirms gas is off before removing gas line; soap-tests cap",
       "Caps flue pipe after removing furnace",

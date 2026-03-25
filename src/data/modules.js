@@ -59,7 +59,6 @@ export const MODULES = [
           "Explains why improper unrolling causes damage",
           "Correctly unrolls line set using the walk-out method",
           "Unrolls on flat, smooth ground without kinks or flat spots",
-          "Performs visual inspection of unrolled line set",
           "Identifies damage (kinks, flat spots, stress marks) correctly",
         ],
       },

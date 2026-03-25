@@ -242,34 +242,48 @@ export default function RubricApp({ session, onBack }) {
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-100 font-sans flex flex-col">
+    <div className="min-h-screen font-sans flex flex-col" style={{ backgroundColor: '#FBFAF1' }}>
       {/* Header */}
-      <div className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between flex-shrink-0">
+      <div className="px-4 py-3 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#0F1F0D' }}>
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="text-gray-400 hover:text-white text-xs px-2 py-1 rounded border border-gray-700 hover:border-gray-500 transition"
+            className="text-xs px-2 py-1 rounded border transition"
+            style={{ color: '#ACAA93', borderColor: '#113823' }}
+            onMouseEnter={e => { e.target.style.color = '#FBFAF1'; e.target.style.borderColor = '#3CD567'; }}
+            onMouseLeave={e => { e.target.style.color = '#ACAA93'; e.target.style.borderColor = '#113823'; }}
           >
             ← Sessions
           </button>
+          <img src="/logo.png" alt="JetStart" className="h-8 w-auto" />
           <div>
-            <div className="text-base font-bold">JetStart Training Rubric</div>
-            <div className="text-xs text-gray-400">12-Student Cohort · Trainer Tool</div>
+            <div className="text-base font-bold text-white tracking-tight">JetStart Training Rubric</div>
+            <div className="text-xs" style={{ color: '#ACAA93' }}>12-Student Cohort · Trainer Tool</div>
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          <span className={`text-xs px-2 py-0.5 rounded ${saveStatus === "saved" ? "text-green-400" : saveStatus === "saving" ? "text-yellow-400" : "text-red-400"}`}>
+          <span className="text-xs px-2 py-0.5 rounded" style={{
+            color: saveStatus === "saved" ? '#3CD567' : saveStatus === "saving" ? '#CBFF8A' : '#f87171'
+          }}>
             {saveStatus === "saved" ? "✓ Saved" : saveStatus === "saving" ? "Saving…" : "⚠ Save error"}
           </span>
-          <button onClick={() => setActiveTab("grading")} className={`px-3 py-1 rounded text-xs font-medium transition ${activeTab==="grading"?"bg-blue-600 text-white":"bg-gray-700 text-gray-300 hover:bg-gray-600"}`}>Grading</button>
-          <button onClick={() => setActiveTab("summary")} className={`px-3 py-1 rounded text-xs font-medium transition ${activeTab==="summary"?"bg-blue-600 text-white":"bg-gray-700 text-gray-300 hover:bg-gray-600"}`}>Summary</button>
-          <button onClick={() => setActiveTab("studentnotes")} className={`px-3 py-1 rounded text-xs font-medium transition ${activeTab==="studentnotes"?"bg-blue-600 text-white":"bg-gray-700 text-gray-300 hover:bg-gray-600"}`}>Student Notes</button>
-          <button onClick={exportPDF} className="px-3 py-1 rounded text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1">⬇ Export PDF</button>
+          {[["grading","Grading"],["summary","Summary"],["studentnotes","Student Notes"]].map(([tab, label]) => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className="px-3 py-1 rounded text-xs font-medium transition"
+              style={activeTab === tab
+                ? { backgroundColor: '#3CD567', color: '#0F1F0D' }
+                : { backgroundColor: '#113823', color: '#ACAA93' }}
+            >{label}</button>
+          ))}
+          <button onClick={exportPDF}
+            className="px-3 py-1 rounded text-xs font-medium transition flex items-center gap-1"
+            style={{ backgroundColor: '#113823', color: '#CBFF8A', border: '1px solid #3CD567' }}
+          >⬇ Export PDF</button>
         </div>
       </div>
 
       {/* Cohort info bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-1.5 flex items-center gap-4 text-xs flex-shrink-0">
+      <div className="border-b px-4 py-1.5 flex items-center gap-4 text-xs flex-shrink-0" style={{ backgroundColor: '#FBFAF1', borderColor: '#E2E1D3' }}>
         {editingInfo ? (
           <>
             {[["trainer","Trainer"],["cohort","Cohort"],["dates","Dates"]].map(([f, label]) => (
@@ -282,7 +296,7 @@ export default function RubricApp({ session, onBack }) {
                 />
               </label>
             ))}
-            <button onClick={() => setEditingInfo(false)} className="px-2 py-0.5 rounded bg-blue-600 text-white text-xs">Save</button>
+            <button onClick={() => setEditingInfo(false)} className="px-2 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}>Save</button>
           </>
         ) : (
           <>
@@ -299,12 +313,15 @@ export default function RubricApp({ session, onBack }) {
       {activeTab === "grading" && (
         <div className="flex flex-1 overflow-hidden">
           {/* Module sidebar */}
-          <div className="w-52 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
+          <div className="w-52 overflow-y-auto flex-shrink-0 border-r" style={{ backgroundColor: '#FBFAF1', borderColor: '#E2E1D3' }}>
             {MODULES.map((m, i) => (
               <button
                 key={i}
                 onClick={() => setActiveModule(i)}
-                className={`w-full text-left px-3 py-2 text-xs border-b border-gray-100 transition ${activeModule===i ? "bg-blue-600 text-white font-semibold" : "text-gray-700 hover:bg-gray-50"}`}
+                className="w-full text-left px-3 py-2 text-xs border-b transition font-medium"
+                style={activeModule === i
+                  ? { backgroundColor: '#0F1F0D', color: '#3CD567', borderColor: '#113823' }
+                  : { color: '#666958', borderColor: '#E2E1D3', backgroundColor: 'transparent' }}
               >
                 {m.title}
               </button>
@@ -318,10 +335,10 @@ export default function RubricApp({ session, onBack }) {
               <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
                 <table className="text-xs min-w-max w-full">
                   <thead>
-                    <tr className="bg-gray-800 text-white">
-                      <th className="px-3 py-2 text-left font-semibold border-r border-gray-600 w-56">Skill</th>
+                    <tr style={{ backgroundColor: '#0F1F0D', color: '#FBFAF1' }}>
+                      <th className="px-3 py-2 text-left font-semibold border-r w-56" style={{ borderColor: '#113823' }}>Skill</th>
                       {students.map((name, i) => (
-                        <th key={i} className="px-1 py-2 text-center font-medium border-r border-gray-600 min-w-[80px]">
+                        <th key={i} className="px-1 py-2 text-center font-medium border-r min-w-[80px]" style={{ borderColor: '#113823' }}>
                           {editingStudent === i ? (
                             <input
                               autoFocus
@@ -342,8 +359,8 @@ export default function RubricApp({ session, onBack }) {
                     {mod.sections
                       ? mod.sections.map((sec, si) => (
                         <>{/* section header */}
-                          <tr key={`sec-${si}`} className="bg-blue-50">
-                            <td colSpan={students.length + 1} className="px-3 py-1.5 text-xs font-semibold text-blue-800 border-b border-blue-200">{sec.subtitle}</td>
+                          <tr key={`sec-${si}`} style={{ backgroundColor: '#113823' }}>
+                            <td colSpan={students.length + 1} className="px-3 py-1.5 text-xs font-semibold border-b" style={{ color: '#CBFF8A', borderColor: '#0F1F0D' }}>{sec.subtitle}</td>
                           </tr>
                           {renderSkillRows(activeModule, sec.skills, sec.subtitle)}
                         </>
@@ -359,12 +376,12 @@ export default function RubricApp({ session, onBack }) {
           {/* Notes slide-in panel */}
           {notesPanel && (
             <div className="w-72 bg-white border-l border-gray-200 shadow-xl flex flex-col flex-shrink-0">
-              <div className="bg-gray-800 text-white px-4 py-3 flex items-start justify-between">
+              <div className="px-4 py-3 flex items-start justify-between" style={{ backgroundColor: '#0F1F0D' }}>
                 <div>
-                  <div className="text-xs font-bold">{students[notesPanel.studentIdx]}</div>
-                  <div className="text-xs text-gray-400 mt-0.5 leading-tight">{notesPanel.skill}</div>
+                  <div className="text-xs font-bold" style={{ color: '#3CD567' }}>{students[notesPanel.studentIdx]}</div>
+                  <div className="text-xs mt-0.5 leading-tight" style={{ color: '#ACAA93' }}>{notesPanel.skill}</div>
                 </div>
-                <button onClick={() => setNotesPanel(null)} className="text-gray-400 hover:text-white text-lg leading-none ml-2">×</button>
+                <button onClick={() => setNotesPanel(null)} className="text-lg leading-none ml-2" style={{ color: '#666958' }}>×</button>
               </div>
               <div className="p-4 flex-1 flex flex-col gap-3">
                 <div>
@@ -388,7 +405,7 @@ export default function RubricApp({ session, onBack }) {
                     rows={4}
                   />
                 </div>
-                <button onClick={() => setNotesPanel(null)} className="mt-auto w-full py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold">Done</button>
+                <button onClick={() => setNotesPanel(null)} className="mt-auto w-full py-1.5 rounded text-xs font-bold transition" style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}>Done</button>
               </div>
             </div>
           )}
@@ -416,9 +433,9 @@ export default function RubricApp({ session, onBack }) {
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
             <table className="text-xs w-full min-w-max">
               <thead>
-                <tr className="bg-gray-800 text-white">
-                  <th className="px-3 py-2 text-left border-r border-gray-600 w-48">Module</th>
-                  {students.map((n, i) => <th key={i} className="px-2 py-2 text-center border-r border-gray-600 min-w-[60px]">{n}</th>)}
+                <tr style={{ backgroundColor: '#0F1F0D', color: '#FBFAF1' }}>
+                  <th className="px-3 py-2 text-left border-r w-48" style={{ borderColor: '#113823' }}>Module</th>
+                  {students.map((n, i) => <th key={i} className="px-2 py-2 text-center border-r min-w-[60px]" style={{ borderColor: '#113823' }}>{n}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -443,9 +460,9 @@ export default function RubricApp({ session, onBack }) {
               const allNotes = Object.entries(notes[si] || {}).filter(([k, v]) => k !== "__overall__" && v);
               return (
                 <div key={si} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                  <div className="bg-gray-800 text-white px-4 py-2 flex items-center justify-between">
-                    <span className="font-semibold text-sm">{name}</span>
-                    <span className="text-xs text-gray-400">{allNotes.length} skill note{allNotes.length !== 1 ? "s" : ""}</span>
+                  <div className="px-4 py-2 flex items-center justify-between" style={{ backgroundColor: '#0F1F0D' }}>
+                    <span className="font-semibold text-sm" style={{ color: '#3CD567' }}>{name}</span>
+                    <span className="text-xs" style={{ color: '#ACAA93' }}>{allNotes.length} skill note{allNotes.length !== 1 ? "s" : ""}</span>
                   </div>
                   <div className="p-3 space-y-2">
                     <div>

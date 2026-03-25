@@ -51,36 +51,50 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
-      <div className="bg-gray-900 text-white px-6 py-4">
-        <div className="text-lg font-bold">JetStart Training Rubric</div>
-        <div className="text-xs text-gray-400">Trainer portal</div>
+    <div className="min-h-screen font-sans" style={{ backgroundColor: '#FBFAF1' }}>
+
+      {/* Header */}
+      <div style={{ backgroundColor: '#0F1F0D' }} className="px-6 py-4 flex items-center gap-3">
+        <img src="/logo.png" alt="JetStart" className="h-10 w-auto" />
+        <div>
+          <div className="text-white text-lg font-bold tracking-tight">JetStart Training Rubric</div>
+          <div className="text-xs" style={{ color: '#ACAA93' }}>Trainer portal</div>
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base font-bold text-gray-800">Training Sessions</h2>
+      {/* Hero band */}
+      <div style={{ backgroundColor: '#113823' }} className="px-6 py-5">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <div>
+            <div className="text-white text-sm font-semibold">Training Sessions</div>
+            <div className="text-xs mt-0.5" style={{ color: '#CBFF8A' }}>Select a session or create a new cohort</div>
+          </div>
           <button
             onClick={createSession}
             disabled={creating}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded transition disabled:opacity-50"
+            className="px-4 py-2 text-sm font-bold rounded transition disabled:opacity-50"
+            style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}
           >
             {creating ? 'Creating…' : '+ New Session'}
           </button>
         </div>
+      </div>
 
+      {/* Session list */}
+      <div className="max-w-3xl mx-auto px-6 py-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded px-4 py-3 mb-4">{error}</div>
         )}
 
         {loading ? (
-          <div className="text-gray-400 text-sm">Loading…</div>
+          <div className="text-sm" style={{ color: '#666958' }}>Loading…</div>
         ) : sessions.length === 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-10 text-center">
-            <div className="text-gray-500 text-sm mb-3">No sessions yet.</div>
+          <div className="rounded-xl border-2 border-dashed p-10 text-center" style={{ borderColor: '#E2E1D3' }}>
+            <div className="text-sm mb-3" style={{ color: '#666958' }}>No sessions yet.</div>
             <button
               onClick={createSession}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded transition"
+              className="px-4 py-2 text-sm font-bold rounded transition"
+              style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}
             >
               Create your first session
             </button>
@@ -91,13 +105,14 @@ export default function App() {
               <div
                 key={s.id}
                 onClick={() => setActiveSession(s)}
-                className="bg-white rounded-lg border border-gray-200 px-4 py-3 cursor-pointer hover:border-blue-300 hover:shadow-sm transition flex items-center justify-between group"
+                className="bg-white rounded-xl border px-4 py-3 cursor-pointer transition flex items-center justify-between group hover:shadow-md"
+                style={{ borderColor: '#E2E1D3' }}
               >
                 <div>
-                  <div className="font-semibold text-sm text-gray-800">
-                    {s.cohort_name || <span className="text-gray-400 italic">Untitled Cohort</span>}
+                  <div className="font-semibold text-sm" style={{ color: '#0F1F0D' }}>
+                    {s.cohort_name || <span style={{ color: '#ACAA93' }} className="italic">Untitled Cohort</span>}
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5 space-x-2">
+                  <div className="text-xs mt-0.5 space-x-2" style={{ color: '#666958' }}>
                     {s.trainer && <span>Trainer: <strong>{s.trainer}</strong></span>}
                     {s.dates && <span>· {s.dates}</span>}
                     <span>· Updated {new Date(s.updated_at).toLocaleDateString()}</span>
@@ -105,7 +120,8 @@ export default function App() {
                 </div>
                 <button
                   onClick={e => deleteSession(s.id, e)}
-                  className="text-gray-300 group-hover:text-gray-400 hover:!text-red-500 text-xs px-2 py-1 rounded hover:bg-red-50 transition"
+                  className="text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition hover:bg-red-50 hover:text-red-500"
+                  style={{ color: '#ACAA93' }}
                 >
                   Delete
                 </button>

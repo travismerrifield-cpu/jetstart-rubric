@@ -318,7 +318,7 @@ export const MODULES = [
       "Passes tug test on all connections",
       "Manages wires neatly with cable clips; no excessive tension",
       "Wires condensate pump and overflow switch in series at CN5",
-      "Able to wire the smart system in 30 minutes or less",
+      "Completes smart system wiring in 30 minutes",
     ],
   },
   {

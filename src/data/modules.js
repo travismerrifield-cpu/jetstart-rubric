@@ -37,10 +37,7 @@ export const MODULES = [
       {
         subtitle: "Line Set Unrolling",
         skills: [
-          "Explains why improper unrolling causes damage",
           "Correctly unrolls line set using the walk-out method",
-          "Unrolls on flat, smooth ground without kinks or flat spots",
-          "Identifies damage (kinks, flat spots, stress marks) correctly",
         ],
       },
       {

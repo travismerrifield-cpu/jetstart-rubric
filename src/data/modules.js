@@ -1,6 +1,6 @@
 export const MODULES = [
   {
-    title: "MODULE 1: Professionalism & Customer Communication",
+    title: "MODULE 1: Customer Communication",
     sections: [
       {
         subtitle: "Arriving on Site (Meet & Greet)",

@@ -1,11 +1,114 @@
 import { useState, useEffect } from 'react';
 import RubricApp from './RubricApp';
 
+function NewSessionModal({ onConfirm, onCancel }) {
+  const [count, setCount] = useState('');
+  const [names, setNames] = useState([]);
+  const [step, setStep] = useState('count'); // 'count' | 'names'
+
+  function handleCountSubmit(e) {
+    e.preventDefault();
+    const n = parseInt(count);
+    if (!n || n < 1 || n > 20) return;
+    setNames(Array.from({ length: n }, () => ''));
+    setStep('names');
+  }
+
+  function handleNamesSubmit(e) {
+    e.preventDefault();
+    const filled = names.map((n, i) => n.trim() || `Student ${i + 1}`);
+    onConfirm(filled);
+  }
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(15,31,13,0.7)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        {/* Modal header */}
+        <div className="px-6 py-4" style={{ backgroundColor: '#0F1F0D' }}>
+          <div className="text-white font-bold text-base">New Training Session</div>
+          <div className="text-xs mt-0.5" style={{ color: '#ACAA93' }}>
+            {step === 'count' ? 'How many participants?' : `Enter participant names`}
+          </div>
+        </div>
+
+        <div className="px-6 py-5">
+          {step === 'count' ? (
+            <form onSubmit={handleCountSubmit}>
+              <label className="block text-sm font-semibold mb-2" style={{ color: '#0F1F0D' }}>
+                Number of participants
+              </label>
+              <input
+                autoFocus
+                type="number"
+                min="1"
+                max="20"
+                value={count}
+                onChange={e => setCount(e.target.value)}
+                placeholder="e.g. 8"
+                className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none"
+                style={{ borderColor: '#E2E1D3' }}
+                onFocus={e => e.target.style.borderColor = '#3CD567'}
+                onBlur={e => e.target.style.borderColor = '#E2E1D3'}
+              />
+              <div className="flex gap-2 mt-4">
+                <button type="button" onClick={onCancel}
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold border"
+                  style={{ borderColor: '#E2E1D3', color: '#666958' }}>
+                  Cancel
+                </button>
+                <button type="submit"
+                  className="flex-1 py-2 rounded-lg text-sm font-bold"
+                  style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}>
+                  Next →
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleNamesSubmit}>
+              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                {names.map((name, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-xs font-bold w-5 text-right" style={{ color: '#ACAA93' }}>{i + 1}</span>
+                    <input
+                      autoFocus={i === 0}
+                      type="text"
+                      value={name}
+                      onChange={e => { const n = [...names]; n[i] = e.target.value; setNames(n); }}
+                      placeholder={`Student ${i + 1}`}
+                      className="flex-1 border-2 rounded-lg px-3 py-1.5 text-sm focus:outline-none"
+                      style={{ borderColor: '#E2E1D3' }}
+                      onFocus={e => e.target.style.borderColor = '#3CD567'}
+                      onBlur={e => e.target.style.borderColor = '#E2E1D3'}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <button type="button" onClick={() => setStep('count')}
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold border"
+                  style={{ borderColor: '#E2E1D3', color: '#666958' }}>
+                  ← Back
+                </button>
+                <button type="submit"
+                  className="flex-1 py-2 rounded-lg text-sm font-bold"
+                  style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}>
+                  Create Session
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [sessions, setSessions] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => { fetchSessions(); }, []);
@@ -22,12 +125,13 @@ export default function App() {
     }
   }
 
-  async function createSession() {
+  async function createSession(students) {
     setCreating(true);
+    setShowModal(false);
     const res = await fetch('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
+      body: JSON.stringify({ students }),
     });
     const session = await res.json();
     setCreating(false);
@@ -53,6 +157,13 @@ export default function App() {
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: '#FBFAF1' }}>
 
+      {showModal && (
+        <NewSessionModal
+          onConfirm={createSession}
+          onCancel={() => setShowModal(false)}
+        />
+      )}
+
       {/* Header */}
       <div style={{ backgroundColor: '#0F1F0D' }} className="px-6 py-4 flex items-center gap-3">
         <img src="/logo.png" alt="JetStart" className="h-10 w-auto" />
@@ -70,7 +181,7 @@ export default function App() {
             <div className="text-xs mt-0.5" style={{ color: '#CBFF8A' }}>Select a session or create a new cohort</div>
           </div>
           <button
-            onClick={createSession}
+            onClick={() => setShowModal(true)}
             disabled={creating}
             className="px-4 py-2 text-sm font-bold rounded transition disabled:opacity-50"
             style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}
@@ -92,7 +203,7 @@ export default function App() {
           <div className="rounded-xl border-2 border-dashed p-10 text-center" style={{ borderColor: '#E2E1D3' }}>
             <div className="text-sm mb-3" style={{ color: '#666958' }}>No sessions yet.</div>
             <button
-              onClick={createSession}
+              onClick={() => setShowModal(true)}
               className="px-4 py-2 text-sm font-bold rounded transition"
               style={{ backgroundColor: '#3CD567', color: '#0F1F0D' }}
             >

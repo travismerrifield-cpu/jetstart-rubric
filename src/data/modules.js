@@ -284,6 +284,7 @@ export const MODULES = [
       "Communicates proactively with crew and instructor",
       "Treats training equipment with care",
       "Represents Jetson's code of conduct at all times",
+      "Communicates with maturity",
     ],
   },
 ];
